@@ -1,45 +1,101 @@
 import SwiftUI
 
+enum AppSection: String, CaseIterable, Hashable {
+    case chat, diary, calendar, todo, timeline
+
+    var title: String {
+        switch self {
+        case .chat: return "聊天"
+        case .diary: return "日记"
+        case .calendar: return "日历"
+        case .todo: return "待办"
+        case .timeline: return "时间轴"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .chat: return "bubble.left.and.bubble.right.fill"
+        case .diary: return "book.fill"
+        case .calendar: return "calendar"
+        case .todo: return "checklist"
+        case .timeline: return "clock.arrow.circlepath"
+        }
+    }
+}
+
 struct ContentView: View {
-    @State private var selectedTab = 0
+    @State private var selectedSection: AppSection = .chat
+    @State private var isSidebarVisible = false
+    @Environment(\.horizontalSizeClass) private var sizeClass
+
+    private var isCompact: Bool { sizeClass == .compact }
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ChatView()
-                .tabItem {
-                    Image(systemName: "bubble.left.and.bubble.right")
-                    Text("聊天")
-                }
-                .tag(0)
+        ZStack(alignment: .leading) {
+            HStack(spacing: 0) {
+                if !isCompact {
+                    SidebarView(selected: $selectedSection)
+                        .frame(width: 280)
 
-            DiaryView()
-                .tabItem {
-                    Image(systemName: "book")
-                    Text("日记")
+                    Rectangle()
+                        .fill(AppTheme.border)
+                        .frame(width: 0.5)
                 }
-                .tag(1)
 
-            CalendarTabView()
-                .tabItem {
-                    Image(systemName: "calendar")
-                    Text("日历")
+                NavigationStack {
+                    detailView
+                        .navigationBarTitleDisplayMode(.inline)
+                        .toolbar {
+                            if isCompact {
+                                ToolbarItem(placement: .topBarLeading) {
+                                    Button {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            isSidebarVisible.toggle()
+                                        }
+                                    } label: {
+                                        Image(systemName: "sidebar.left")
+                                            .foregroundColor(AppTheme.primary)
+                                    }
+                                }
+                            }
+                        }
                 }
-                .tag(2)
+                .frame(maxWidth: .infinity)
+            }
 
-            TodoView()
-                .tabItem {
-                    Image(systemName: "checklist")
-                    Text("待办")
-                }
-                .tag(3)
+            if isCompact && isSidebarVisible {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .onTapGesture {
+                        withAnimation(.easeInOut(duration: 0.25)) {
+                            isSidebarVisible = false
+                        }
+                    }
+                    .zIndex(10)
 
-            TimelineView()
-                .tabItem {
-                    Image(systemName: "clock.arrow.circlepath")
-                    Text("时间轴")
+                SidebarView(selected: $selectedSection) {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        isSidebarVisible = false
+                    }
                 }
-                .tag(4)
+                .frame(width: 280)
+                .background(Color(.systemBackground))
+                .shadow(color: .black.opacity(0.15), radius: 12, x: 4)
+                .transition(.move(edge: .leading))
+                .zIndex(11)
+            }
         }
-        .tint(AppTheme.primary)
+    }
+
+    @ViewBuilder
+    private var detailView: some View {
+        switch selectedSection {
+        case .chat: ChatView()
+        case .diary: DiaryView()
+        case .calendar: CalendarTabView()
+        case .todo: TodoView()
+        case .timeline: TimelineView()
+        }
     }
 }

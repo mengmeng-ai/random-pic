@@ -24,8 +24,7 @@ struct TimelineView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
+        ScrollView {
                 if events.isEmpty {
                     VStack(spacing: 12) {
                         Image(systemName: "clock.arrow.circlepath")
@@ -62,7 +61,6 @@ struct TimelineView: View {
                     events.append(event)
                 }
             }
-        }
     }
 }
 

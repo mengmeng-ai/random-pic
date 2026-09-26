@@ -9,8 +9,7 @@ struct ChatView: View {
     @FocusState private var isInputFocused: Bool
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
                 ScrollViewReader { proxy in
                     ScrollView {
                         LazyVStack(spacing: 12) {
@@ -74,7 +73,6 @@ struct ChatView: View {
                     }
                 }
             }
-        }
     }
 
     private func sendMessage() {

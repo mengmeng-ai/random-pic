@@ -13,8 +13,7 @@ struct DiaryView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
                 Picker("筛选", selection: $selectedAuthorFilter) {
                     Text("全部").tag(nil as DiaryAuthor?)
                     Text("允允").tag(DiaryAuthor.yunyun as DiaryAuthor?)
@@ -72,7 +71,6 @@ struct DiaryView: View {
                     entries.append(entry)
                 }
             }
-        }
     }
 }
 

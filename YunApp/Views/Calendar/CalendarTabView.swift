@@ -19,8 +19,7 @@ struct CalendarTabView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
+        ScrollView {
                 VStack(spacing: 20) {
                     DatePicker("选择日期", selection: $selectedDate, displayedComponents: .date)
                         .datePickerStyle(.graphical)
@@ -109,7 +108,6 @@ struct CalendarTabView: View {
                     events.append(event)
                 }
             }
-        }
     }
 
     private func daysUntil(_ date: Date) -> String {

@@ -14,8 +14,7 @@ struct TodoView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
                 List {
                     if !pendingTodos.isEmpty {
                         Section {
@@ -98,7 +97,6 @@ struct TodoView: View {
                 .padding(.vertical, 10)
             }
             .navigationTitle("待办")
-        }
     }
 
     private func addTodo() {
