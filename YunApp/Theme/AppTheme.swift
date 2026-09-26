@@ -1,23 +1,26 @@
 import SwiftUI
 
 struct AppTheme {
-    static let primary = Color(hex: "7C5CFC")
-    static let primaryLight = Color(hex: "B8A9FF")
-    static let primaryDark = Color(hex: "5A3ED9")
-    static let background = Color(hex: "F9F8FF")
-    static let backgroundDark = Color(hex: "1A1625")
+    static let primary = Color(hex: "DA7756")
+    static let primaryLight = Color(hex: "E8A991")
+    static let primaryDark = Color(hex: "C4654A")
+    static let background = Color(hex: "FAF9F6")
+    static let backgroundDark = Color(hex: "2B2926")
     static let surface = Color.white
-    static let surfaceDark = Color(hex: "241F31")
-    static let textPrimary = Color(hex: "1A1625")
-    static let textSecondary = Color(hex: "6E6885")
-    static let textPrimaryDark = Color(hex: "F0EDFF")
-    static let textSecondaryDark = Color(hex: "9B95B0")
-    static let border = Color(hex: "E8E5F0")
-    static let borderDark = Color(hex: "3D3552")
+    static let surfaceDark = Color(hex: "353330")
+    static let textPrimary = Color(hex: "2D2B28")
+    static let textSecondary = Color(hex: "7C7B78")
+    static let textPrimaryDark = Color(hex: "EDEDEC")
+    static let textSecondaryDark = Color(hex: "A8A6A2")
+    static let border = Color(hex: "E8E6E1")
+    static let borderDark = Color(hex: "4A4845")
 
-    static let messageSent = Color(hex: "7C5CFC")
-    static let messageReceived = Color(hex: "F0EDFF")
-    static let messageReceivedDark = Color(hex: "2D2740")
+    static let messageSent = Color(hex: "DA7756")
+    static let messageReceived = Color(hex: "F0EFEB")
+    static let messageReceivedDark = Color(hex: "3D3B38")
+
+    static let sidebarBg = Color(hex: "F0EFEB")
+    static let sidebarBgDark = Color(hex: "2F2D2A")
 
     static let cornerRadius: CGFloat = 16
     static let smallCornerRadius: CGFloat = 8

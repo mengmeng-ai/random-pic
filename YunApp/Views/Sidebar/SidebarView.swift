@@ -10,15 +10,16 @@ struct SidebarView: View {
                 RoundedRectangle(cornerRadius: 10)
                     .fill(
                         LinearGradient(
-                            colors: [AppTheme.primary, AppTheme.primaryLight],
+                            colors: [AppTheme.primary, AppTheme.primaryDark],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     )
                     .frame(width: 36, height: 36)
                     .overlay {
-                        Text("💜")
-                            .font(.system(size: 16))
+                        Text("Y")
+                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                            .foregroundColor(.white)
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
