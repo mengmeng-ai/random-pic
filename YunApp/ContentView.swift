@@ -15,7 +15,7 @@ enum AppSection: String, CaseIterable, Hashable {
 
     var icon: String {
         switch self {
-        case .chat: return "bubble.left.and.bubble.right.fill"
+        case .chat: return "message.fill"
         case .diary: return "book.fill"
         case .calendar: return "calendar"
         case .todo: return "checklist"
@@ -26,71 +26,52 @@ enum AppSection: String, CaseIterable, Hashable {
 
 struct ContentView: View {
     @State private var selectedSection: AppSection = .chat
-    @State private var isSidebarVisible = false
     @Environment(\.horizontalSizeClass) private var sizeClass
 
     private var isCompact: Bool { sizeClass == .compact }
 
     var body: some View {
-        ZStack(alignment: .leading) {
-            HStack(spacing: 0) {
-                if !isCompact {
-                    SidebarView(selected: $selectedSection)
-                        .frame(width: 280)
+        if isCompact {
+            tabLayout
+        } else {
+            sidebarLayout
+        }
+    }
 
-                    Rectangle()
-                        .fill(AppTheme.border)
-                        .frame(width: 0.5)
-                }
-
+    private var tabLayout: some View {
+        TabView(selection: $selectedSection) {
+            ForEach(AppSection.allCases, id: \.self) { section in
                 NavigationStack {
-                    detailView
-                        .navigationBarTitleDisplayMode(.inline)
-                        .toolbar {
-                            if isCompact {
-                                ToolbarItem(placement: .topBarLeading) {
-                                    Button {
-                                        withAnimation(.easeInOut(duration: 0.25)) {
-                                            isSidebarVisible.toggle()
-                                        }
-                                    } label: {
-                                        Image(systemName: "sidebar.left")
-                                            .foregroundColor(AppTheme.primary)
-                                    }
-                                }
-                            }
-                        }
+                    sectionView(for: section)
                 }
-                .frame(maxWidth: .infinity)
+                .tabItem {
+                    Label(section.title, systemImage: section.icon)
+                }
+                .tag(section)
             }
+        }
+        .tint(AppTheme.primary)
+    }
 
-            if isCompact && isSidebarVisible {
-                Color.black.opacity(0.35)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation(.easeInOut(duration: 0.25)) {
-                            isSidebarVisible = false
-                        }
-                    }
-                    .zIndex(10)
-
-                SidebarView(selected: $selectedSection) {
-                    withAnimation(.easeInOut(duration: 0.25)) {
-                        isSidebarVisible = false
-                    }
-                }
+    private var sidebarLayout: some View {
+        HStack(spacing: 0) {
+            SidebarView(selected: $selectedSection)
                 .frame(width: 280)
-                .background(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.15), radius: 12, x: 4)
-                .transition(.move(edge: .leading))
-                .zIndex(11)
+
+            Rectangle()
+                .fill(AppTheme.border)
+                .frame(width: 0.5)
+
+            NavigationStack {
+                sectionView(for: selectedSection)
             }
+            .frame(maxWidth: .infinity)
         }
     }
 
     @ViewBuilder
-    private var detailView: some View {
-        switch selectedSection {
+    private func sectionView(for section: AppSection) -> some View {
+        switch section {
         case .chat: ChatView()
         case .diary: DiaryView()
         case .calendar: CalendarTabView()

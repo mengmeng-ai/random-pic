@@ -116,6 +116,6 @@ struct DiaryEntryCard: View {
         .padding(14)
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.cornerRadius))
-        .shadow(color: .black.opacity(0.04), radius: 8, y: 2)
+        .shadow(color: .black.opacity(0.05), radius: 6, y: 2)
     }
 }

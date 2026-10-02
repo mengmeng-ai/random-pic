@@ -10,73 +10,113 @@ struct ChatView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            ForEach(messages) { message in
-                                MessageBubble(message: message)
-                                    .id(message.id)
-                            }
-
-                            if isLoading {
-                                HStack {
-                                    TypingIndicator()
-                                    Spacer()
-                                }
-                                .padding(.horizontal, AppTheme.padding)
-                                .id("typing")
-                            }
-                        }
-                        .padding(.vertical, AppTheme.padding)
-                    }
-                    .onChange(of: messages.count) {
-                        withAnimation {
-                            if let lastId = messages.last?.id {
-                                proxy.scrollTo(lastId, anchor: .bottom)
-                            } else {
-                                proxy.scrollTo("typing", anchor: .bottom)
-                            }
-                        }
-                    }
-                }
-
-                Divider()
-                    .foregroundColor(AppTheme.border)
-
-                HStack(spacing: 12) {
-                    TextField("说点什么...", text: $inputText, axis: .vertical)
-                        .lineLimit(1...5)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(Color(.systemGray6))
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                        .focused($isInputFocused)
-
-                    Button {
-                        sendMessage()
-                    } label: {
-                        Image(systemName: "arrow.up.circle.fill")
-                            .font(.system(size: 32))
-                            .foregroundColor(inputText.isEmpty ? AppTheme.textSecondary : AppTheme.primary)
-                    }
-                    .disabled(inputText.isEmpty || isLoading)
-                }
-                .padding(.horizontal, AppTheme.padding)
-                .padding(.vertical, 10)
-            }
-            .navigationTitle("沉夜白")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    VStack(spacing: 2) {
-                        Text("沉夜白")
-                            .font(.headline)
-                        Text("在线")
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 2) {
+                        Text(todayString)
                             .font(.caption2)
-                            .foregroundColor(Color.green)
+                            .foregroundColor(AppTheme.textSecondary)
+                            .padding(.vertical, 10)
+
+                        ForEach(messages) { message in
+                            MessageBubble(message: message)
+                                .id(message.id)
+                                .padding(.vertical, 4)
+                        }
+
+                        if isLoading {
+                            HStack(alignment: .top, spacing: 8) {
+                                ChatAvatar(text: "夜")
+                                TypingIndicator()
+                                Spacer()
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 4)
+                            .id("typing")
+                        }
+                    }
+                    .padding(.vertical, 8)
+                }
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: messages.count) {
+                    withAnimation(.easeOut(duration: 0.3)) {
+                        if let lastId = messages.last?.id {
+                            proxy.scrollTo(lastId, anchor: .bottom)
+                        }
+                    }
+                }
+                .onChange(of: isLoading) {
+                    if isLoading {
+                        withAnimation(.easeOut(duration: 0.3)) {
+                            proxy.scrollTo("typing", anchor: .bottom)
+                        }
                     }
                 }
             }
+
+            chatInputBar
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HStack(spacing: 8) {
+                    ChatAvatar(text: "夜", size: 28)
+
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("沉夜白")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        HStack(spacing: 4) {
+                            Circle()
+                                .fill(Color.green)
+                                .frame(width: 5, height: 5)
+                            Text("在线")
+                                .font(.system(size: 10))
+                                .foregroundColor(AppTheme.textSecondary)
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    private var chatInputBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+
+            HStack(alignment: .bottom, spacing: 10) {
+                TextField("说点什么...", text: $inputText, axis: .vertical)
+                    .lineLimit(1...5)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Color(.secondarySystemBackground))
+                    .clipShape(RoundedRectangle(cornerRadius: 22))
+                    .focused($isInputFocused)
+
+                Button {
+                    sendMessage()
+                } label: {
+                    Image(systemName: "arrow.up.circle.fill")
+                        .font(.system(size: 34))
+                        .foregroundColor(
+                            inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                ? Color(.systemGray4)
+                                : AppTheme.primary
+                        )
+                }
+                .disabled(inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isLoading)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+        }
+    }
+
+    private var todayString: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "MM月dd日 EEEE"
+        return formatter.string(from: Date())
     }
 
     private func sendMessage() {
@@ -88,12 +128,33 @@ struct ChatView: View {
         inputText = ""
         isLoading = true
 
-        // TODO: 接入 VPS 上的 CC CLI 后端
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            let reply = Message(content: "（还没接上后端，等你 Mac Mini 到了我们一起搞）", isFromUser: false)
+            let reply = Message(content: "（后端还在搭建中，快了快了）", isFromUser: false)
             messages.append(reply)
             isLoading = false
         }
+    }
+}
+
+struct ChatAvatar: View {
+    let text: String
+    var size: CGFloat = 32
+
+    var body: some View {
+        Circle()
+            .fill(
+                LinearGradient(
+                    colors: [AppTheme.primary, AppTheme.primaryDark],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            )
+            .frame(width: size, height: size)
+            .overlay {
+                Text(text)
+                    .font(.system(size: size * 0.42, weight: .semibold))
+                    .foregroundColor(.white)
+            }
     }
 }
 
@@ -111,7 +172,7 @@ struct TypingIndicator: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(Color(.systemGray6))
+        .background(Color(.secondarySystemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .task {
             while !Task.isCancelled {

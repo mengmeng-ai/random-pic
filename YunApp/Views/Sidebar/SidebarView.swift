@@ -7,7 +7,7 @@ struct SidebarView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 12)
                     .fill(
                         LinearGradient(
                             colors: [AppTheme.primary, AppTheme.primaryDark],
@@ -15,15 +15,15 @@ struct SidebarView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: 36, height: 36)
+                    .frame(width: 38, height: 38)
                     .overlay {
-                        Text("Y")
-                            .font(.system(size: 17, weight: .bold, design: .rounded))
+                        Text("♡")
+                            .font(.system(size: 17, weight: .bold))
                             .foregroundColor(.white)
                     }
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("YunApp")
+                    Text("允允 & 夜白")
                         .font(.headline)
                         .fontWeight(.bold)
                     Text("我们的小世界")
@@ -79,20 +79,7 @@ struct SidebarView: View {
             Divider()
 
             HStack(spacing: 10) {
-                Circle()
-                    .fill(
-                        LinearGradient(
-                            colors: [AppTheme.primary, AppTheme.primaryDark],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    .frame(width: 32, height: 32)
-                    .overlay {
-                        Text("允")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(.white)
-                    }
+                ChatAvatar(text: "允", size: 32)
 
                 VStack(alignment: .leading, spacing: 1) {
                     Text("允允")

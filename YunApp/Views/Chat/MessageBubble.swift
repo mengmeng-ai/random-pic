@@ -12,36 +12,41 @@ struct MessageBubble: View {
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
             if message.isFromUser {
-                Spacer(minLength: 60)
-                VStack(alignment: .trailing, spacing: 4) {
+                Spacer(minLength: 48)
+                VStack(alignment: .trailing, spacing: 3) {
                     Text(message.content)
+                        .font(.body)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(AppTheme.messageSent)
+                        .background(AppTheme.primary)
                         .foregroundColor(.white)
                         .clipShape(BubbleShape(isFromUser: true))
 
                     Text(timeString)
-                        .font(.caption2)
+                        .font(.system(size: 10))
                         .foregroundColor(AppTheme.textSecondary)
+                        .padding(.trailing, 4)
                 }
             } else {
-                VStack(alignment: .leading, spacing: 4) {
+                ChatAvatar(text: "夜")
+
+                VStack(alignment: .leading, spacing: 3) {
                     Text(message.content)
+                        .font(.body)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 10)
-                        .background(AppTheme.messageReceived)
-                        .foregroundColor(AppTheme.textPrimary)
+                        .background(Color(.secondarySystemBackground))
                         .clipShape(BubbleShape(isFromUser: false))
 
                     Text(timeString)
-                        .font(.caption2)
+                        .font(.system(size: 10))
                         .foregroundColor(AppTheme.textSecondary)
+                        .padding(.leading, 4)
                 }
-                Spacer(minLength: 60)
+                Spacer(minLength: 48)
             }
         }
-        .padding(.horizontal, AppTheme.padding)
+        .padding(.horizontal, 12)
     }
 }
 
@@ -49,7 +54,7 @@ struct BubbleShape: Shape {
     let isFromUser: Bool
 
     func path(in rect: CGRect) -> Path {
-        let radius: CGFloat = 16
+        let radius: CGFloat = 18
         let smallRadius: CGFloat = 4
 
         return Path { path in
