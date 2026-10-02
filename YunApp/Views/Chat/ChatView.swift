@@ -31,7 +31,11 @@ struct ChatView: View {
                     }
                     .onChange(of: messages.count) {
                         withAnimation {
-                            proxy.scrollTo(messages.last?.id ?? "typing", anchor: .bottom)
+                            if let lastId = messages.last?.id {
+                                proxy.scrollTo(lastId, anchor: .bottom)
+                            } else {
+                                proxy.scrollTo("typing", anchor: .bottom)
+                            }
                         }
                     }
                 }
@@ -95,7 +99,6 @@ struct ChatView: View {
 
 struct TypingIndicator: View {
     @State private var dotCount = 0
-    let timer = Timer.publish(every: 0.4, on: .main, in: .common).autoconnect()
 
     var body: some View {
         HStack(spacing: 4) {
@@ -110,8 +113,11 @@ struct TypingIndicator: View {
         .padding(.vertical, 12)
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 16))
-        .onReceive(timer) { _ in
-            dotCount += 1
+        .task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .milliseconds(400))
+                dotCount += 1
+            }
         }
     }
 }
